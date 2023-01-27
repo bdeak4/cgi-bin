@@ -17,7 +17,8 @@ for i in {0..10}; do
 	date=$(date -I -d "+$i day")
 	curl -s "https://kalendar.infozona.hr/api/v1/events/$date" \
 	| jq -r '.dayEvents[]|"\(.title.hr) (\(.category[0].title.hr))\thttps://kalendar.infozona.hr/event/\(.id)"' \
-	| sed "s/^/$(date -R -d "$date")\t/"
+	| sed "s/^/$(date -R -d "$date")\t/" \
+	| grep -v '\(Izložba\)'
 done \
 | awk -F"\t" '!_[$2]++' \
 | awk -F"\t" '{print "<item><title><![CDATA["$2"]]></title><link>"$3"</link><pubDate>"$1"</pubDate></item>"}'
